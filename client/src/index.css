@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 210 40% 98%;
+        --foreground: 222 47% 11%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222 47% 11%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222 47% 11%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 221.2 83.2% 53.3%;
+        --radius: 0.75rem;
+
+        /* Premium Gradients */
+        --gradient-primary: linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(262.1 83.3% 57.8%));
+        --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Principal Theme (Navy/Slate - Deep & Authority) */
+    [data-theme='Principal'] {
+        --primary: 222 47% 11%;
+        --primary-foreground: 210 40% 98%;
+        --ring: 222 47% 11%;
+        --gradient-primary: linear-gradient(135deg, hsl(222 47% 11%), hsl(222 47% 25%));
+    }
+
+    /* Teacher Theme (Emerald/Teal - Calm & Wise) */
+    [data-theme='Teacher'] {
+        --primary: 160 84% 39%;
+        --primary-foreground: 160 100% 98%;
+        --ring: 160 84% 39%;
+        --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(174 86% 44%));
+    }
+
+    /* Student Theme (Amber/Orange - Energetic & Bright) */
+    [data-theme='Student'] {
+        --primary: 24 95% 53%;
+        --primary-foreground: 0 0% 100%;
+        --ring: 24 95% 53%;
+        --gradient-primary: linear-gradient(135deg, hsl(24 95% 53%), hsl(14 100% 57%));
+    }
+
+    /* Parent Theme (Violet/Purple - Caring & Trust) */
+    [data-theme='Parent'] {
+        --primary: 262 83% 58%;
+        --primary-foreground: 210 40% 98%;
+        --ring: 262 83% 58%;
+        --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(291 70% 50%));
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', sans-serif;
+    }
+}
