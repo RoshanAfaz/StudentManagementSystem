@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../co
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/UI/Table';
 import { Badge } from 'lucide-react'; // Placeholder badge
 import { motion } from 'framer-motion';
+import { cn } from '../lib/utils';
 
 const StudentDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
