@@ -12,9 +12,10 @@ import { Button } from '../components/UI/Button';
 import { Input } from '../components/UI/Input';
 import { Label } from '../components/UI/Label';
 import ClassSelector from '../components/UI/ClassSelector';
+import CustomSelect from '../components/UI/CustomSelect';
 import { motion, AnimatePresence } from 'framer-motion';
 import Portal from '../components/UI/Portal';
-import { Plus, Upload, Check, X, FileSpreadsheet, UserPlus, Save, BarChart3, RotateCcw } from 'lucide-react';
+import { Plus, Upload, Check, X, FileSpreadsheet, UserPlus, Save, BarChart3, RotateCcw, ChevronDown } from 'lucide-react';
 import CustomDatePicker from '../components/UI/CustomDatePicker';
 import AttendanceReportModal from '../components/Dashboard/AttendanceReportModal';
 import { cn } from '../lib/utils';
@@ -61,7 +62,7 @@ const TeacherDashboard = () => {
     const [selectedStudent, setSelectedStudent] = useState('');
     const [viewingStudent, setViewingStudent] = useState(null);
     const [examType, setExamType] = useState('');
-    const [subjectsList, setSubjectsList] = useState([{ subjectName: '', marksObtained: '', maxMarks: '' }]);
+    const [subjectsList, setSubjectsList] = useState([{ subjectName: '', marksObtained: '', maxMarks: '', passMarks: '35' }]);
     const [msg, setMsg] = useState('');
     const [studentMarks, setStudentMarks] = useState([]); // Store marks for viewed student
     const [showReport, setShowReport] = useState(false);
@@ -174,7 +175,7 @@ const TeacherDashboard = () => {
     };
 
     const handleAddSubjectField = () => {
-        setSubjectsList([...subjectsList, { subjectName: '', marksObtained: '', maxMarks: '' }]);
+        setSubjectsList([...subjectsList, { subjectName: '', marksObtained: '', maxMarks: '', passMarks: '35' }]);
     };
 
     const handleRemoveSubjectField = (index) => {
@@ -198,7 +199,7 @@ const TeacherDashboard = () => {
                 subjects: subjectsList
             }, config);
             setMsg('Marks added successfully');
-            setSubjectsList([{ subjectName: '', marksObtained: '', maxMarks: '' }]);
+            setSubjectsList([{ subjectName: '', marksObtained: '', maxMarks: '', passMarks: '35' }]);
             setExamType('');
             setSelectedStudent('');
         } catch (error) {
@@ -363,17 +364,19 @@ const TeacherDashboard = () => {
             )}
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 max-w-4xl bg-white/50 backdrop-blur-md shadow-lg p-1.5 border-white/50 rounded-2xl">
-                    <TabsTrigger value="students" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">My Students</TabsTrigger>
-                    <TabsTrigger value="attendance" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Attendance</TabsTrigger>
-                    <TabsTrigger value="marks" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Marks</TabsTrigger>
-                    <TabsTrigger value="timetable" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Timetable</TabsTrigger>
-                    <TabsTrigger value="events" className="relative rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
-                        Events
-                        {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
-                        {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
-                    </TabsTrigger>
-                </TabsList>
+                <div className="overflow-x-auto pb-4 -mb-4 no-scrollbar">
+                    <TabsList className="flex w-fit lg:grid lg:w-full lg:grid-cols-5 min-w-max lg:min-w-0 bg-white/50 backdrop-blur-md shadow-lg p-1.5 border-white/50 rounded-2xl">
+                        <TabsTrigger value="students" className="rounded-xl px-8 lg:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">My Students</TabsTrigger>
+                        <TabsTrigger value="attendance" className="rounded-xl px-8 lg:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Attendance</TabsTrigger>
+                        <TabsTrigger value="marks" className="rounded-xl px-8 lg:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Marks</TabsTrigger>
+                        <TabsTrigger value="timetable" className="rounded-xl px-8 lg:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Timetable</TabsTrigger>
+                        <TabsTrigger value="events" className="relative rounded-xl px-8 lg:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+                            Events
+                            {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
+                            {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
                 <div className="mt-6">
                     <TabsContent value="students">
@@ -408,12 +411,12 @@ const TeacherDashboard = () => {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Roll No</TableHead>
-                                                <TableHead>Name</TableHead>
-                                                <TableHead>ID</TableHead>
-                                                <TableHead>Class</TableHead>
-                                                <TableHead>Parent Contact</TableHead>
-                                                <TableHead>Actions</TableHead>
+                                                <TableHead className="hidden sm:table-cell">Roll No</TableHead>
+                                                <TableHead>Student Name</TableHead>
+                                                <TableHead className="hidden lg:table-cell">ID</TableHead>
+                                                <TableHead className="hidden md:table-cell">Class</TableHead>
+                                                <TableHead className="hidden sm:table-cell">Parent Contact</TableHead>
+                                                <TableHead className="text-right">Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -426,17 +429,26 @@ const TeacherDashboard = () => {
                                             ) : (
                                                 students.map((student) => (
                                                     <TableRow key={student._id}>
-                                                        <TableCell>{student.rollNumber || '-'}</TableCell>
-                                                        <TableCell>{student.user?.name || 'Unknown'}</TableCell>
-                                                        <TableCell>{student.user?.studentId || '-'}</TableCell>
-                                                        <TableCell><span className="font-mono bg-muted px-2 py-1 rounded text-xs">{student.className}</span></TableCell>
-                                                        <TableCell>
-                                                            <div className="text-sm font-medium">{student.parentName || '-'}</div>
-                                                            <div className="text-xs text-muted-foreground">{student.parentPhone}</div>
+                                                        <TableCell className="hidden sm:table-cell font-mono text-xs">{student.rollNumber || '-'}</TableCell>
+                                                        <TableCell className="font-bold">
+                                                            <div className="flex flex-col">
+                                                                <span>{student.user?.name || 'Unknown'}</span>
+                                                                <span className="text-[10px] text-muted-foreground sm:hidden uppercase tracking-tight">
+                                                                    Roll: {student.rollNumber} • {student.className}
+                                                                </span>
+                                                            </div>
                                                         </TableCell>
-                                                        <TableCell>
-                                                            <Button variant="ghost" size="sm" onClick={() => { setViewingStudent(student); fetchStudentMarks(student._id); }}>View</Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => { setFormData(student); setShowEditStudent(true); }}>Edit</Button>
+                                                        <TableCell className="hidden lg:table-cell text-xs font-mono">{student.user?.studentId || '-'}</TableCell>
+                                                        <TableCell className="hidden md:table-cell"><span className="font-mono bg-muted px-2 py-1 rounded text-[10px]">{student.className}</span></TableCell>
+                                                        <TableCell className="hidden sm:table-cell">
+                                                            <div className="text-xs font-medium">{student.parentName || '-'}</div>
+                                                            <div className="text-[10px] text-muted-foreground">{student.parentPhone}</div>
+                                                        </TableCell>
+                                                        <TableCell className="text-right">
+                                                            <div className="flex justify-end gap-1">
+                                                                <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => { setViewingStudent(student); fetchStudentMarks(student._id); }}>View</Button>
+                                                                <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => { setFormData(student); setShowEditStudent(true); }}>Edit</Button>
+                                                            </div>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))
@@ -562,18 +574,17 @@ const TeacherDashboard = () => {
                             <CardContent>
                                 <form onSubmit={handleMarksSubmit} className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Student</Label>
-                                        <select
+                                        <CustomSelect
+                                            label="Student"
+                                            options={students.map(s => ({
+                                                label: `${s.user?.name} (${s.rollNumber})`,
+                                                value: s._id
+                                            }))}
                                             value={selectedStudent}
-                                            onChange={(e) => setSelectedStudent(e.target.value)}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                            onChange={setSelectedStudent}
+                                            placeholder="Select Student"
                                             required
-                                        >
-                                            <option value="">Select Student</option>
-                                            {students.map(s => (
-                                                <option key={s._id} value={s._id}>{s.user?.name} ({s.rollNumber})</option>
-                                            ))}
-                                        </select>
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Exam Name</Label>
@@ -595,7 +606,7 @@ const TeacherDashboard = () => {
 
                                         {subjectsList.map((sub, index) => (
                                             <div key={index} className="grid grid-cols-12 gap-2 items-end">
-                                                <div className="col-span-5 space-y-1">
+                                                <div className="col-span-3 space-y-1">
                                                     <Label>Subject</Label>
                                                     <Input
                                                         value={sub.subjectName}
@@ -614,7 +625,7 @@ const TeacherDashboard = () => {
                                                         required
                                                     />
                                                 </div>
-                                                <div className="col-span-3 space-y-1">
+                                                <div className="col-span-2 space-y-1">
                                                     <Label>Max</Label>
                                                     <Input
                                                         type="number"
@@ -624,7 +635,17 @@ const TeacherDashboard = () => {
                                                         required
                                                     />
                                                 </div>
-                                                <div className="col-span-1 pb-1">
+                                                 <div className="col-span-3 space-y-1">
+                                                     <Label>Pass</Label>
+                                                     <Input
+                                                         type="number"
+                                                         value={sub.passMarks}
+                                                         onChange={(e) => handleSubjectChange(index, 'passMarks', e.target.value)}
+                                                         placeholder="Pass"
+                                                         required
+                                                     />
+                                                 </div>
+                                                 <div className="col-span-1 pb-1">
                                                     {subjectsList.length > 1 && (
                                                         <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => handleRemoveSubjectField(index)}>
                                                             <X className="w-4 h-4" />
@@ -656,18 +677,14 @@ const TeacherDashboard = () => {
                             <CardContent>
                                 <form onSubmit={handleTimetableSubmit} className="space-y-6">
                                     <div className="max-w-md space-y-2">
-                                        <Label>Class Name</Label>
-                                        <select
+                                        <CustomSelect
+                                            label="Class Name"
+                                            options={[...new Set(students.map(s => s.className))].sort()}
                                             value={timetableClass}
-                                            onChange={(e) => setTimetableClass(e.target.value)}
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                            onChange={setTimetableClass}
+                                            placeholder="Select Class"
                                             required
-                                        >
-                                            <option value="">Select Class</option>
-                                            {[...new Set(students.map(s => s.className))].sort().map(cls => (
-                                                <option key={cls} value={cls}>{cls}</option>
-                                            ))}
-                                        </select>
+                                        />
                                     </div>
 
                                     <div className="space-y-2">
@@ -773,7 +790,7 @@ const TeacherDashboard = () => {
                                             {currentTimetable.type === 'image' ? (
                                                 <div className="border rounded p-2 inline-block bg-gray-50">
                                                     <img
-                                                        src={`http://localhost:5000${currentTimetable.imageUrl}`}
+                                                        src={`${import.meta.env.VITE_API_URL}${currentTimetable.imageUrl}`}
                                                         alt="Timetable"
                                                         className="max-w-full h-auto max-h-96 rounded"
                                                     />

@@ -20,12 +20,9 @@ const getAllStudents = async (req, res) => {
             if (teacherProfile && teacherProfile.assignedClasses && teacherProfile.assignedClasses.length > 0) {
                 query.className = { $in: teacherProfile.assignedClasses };
             } else {
-                // If teacher has no assigned classes, they see NO students (or all? Requirement says separate logic, usually implies strict)
-                // Let's assume strict: No classes assigned = No students seen.
-                // However, to be safe during migration, if assignedClasses is empty/undefined, maybe show none?
-                // User said "if i logged in as new teacher other students are assihgning to the new teacher" which means they see all.
-                // So we MUST return empty if no classes assigned.
-                query.className = { $in: [] }; // This effectively returns nothing
+                // If teacher has no assigned classes, they see ALL students
+                // This allows new teachers to see students they just added or students they might need to manage.
+                // query.className = { $in: [] }; // OLD logic: returned nothing
             }
         }
 
@@ -96,6 +93,16 @@ const createStudent = async (req, res) => {
                 parentPhone
             });
 
+            // 4. Automatically Assign Class to Teacher (if applicable)
+            if (req.user && req.user.role === 'Teacher') {
+                const Teacher = require('../models/Teacher');
+                const teacherProfile = await Teacher.findOne({ user: req.user._id });
+                if (teacherProfile && className && !teacherProfile.assignedClasses.includes(className)) {
+                    teacherProfile.assignedClasses.push(className);
+                    await teacherProfile.save();
+                }
+            }
+
             res.status(201).json(student);
         } else {
             res.status(400).json({ message: 'Invalid user data' });
@@ -165,6 +172,17 @@ const bulkUploadStudents = async (req, res) => {
                         parentEmail,
                         parentPhone
                     });
+
+                    // Auto-assign class to teacher if not already assigned
+                    if (req.user && req.user.role === 'Teacher') {
+                        const Teacher = require('../models/Teacher');
+                        const teacherProfile = await Teacher.findOne({ user: req.user._id });
+                        if (teacherProfile && className && !teacherProfile.assignedClasses.includes(className)) {
+                            teacherProfile.assignedClasses.push(className);
+                            await teacherProfile.save();
+                        }
+                    }
+
                     successCount++;
                 }
             } catch (err) {

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import html2pdf from 'html2pdf.js';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileSpreadsheet, Download, Users, CheckCircle2, XCircle } from 'lucide-react';
+import { X, FileSpreadsheet, Download, Users, CheckCircle2, XCircle, ChevronDown } from 'lucide-react';
 import { Button } from '../UI/Button';
+import CustomSelect from '../UI/CustomSelect';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../UI/Table';
@@ -15,6 +17,7 @@ const AttendanceReportModal = ({ isOpen, onClose, className }) => {
     const [year, setYear] = useState(new Date().getFullYear());
     const { user } = useAuth();
     const token = user?.token;
+    const reportRef = useRef();
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -41,8 +44,34 @@ const AttendanceReportModal = ({ isOpen, onClose, className }) => {
     }, [isOpen, month, year, className]);
 
     const handleDownload = () => {
-        // Logic for CSV export could be added here
-        alert("Consolidated report export functionality coming soon!");
+        if (!reportRef.current) return;
+
+        const element = reportRef.current;
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     `Attendance_Report_${className}_${months[month - 1]}_${year}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+
+        // Force download by creating a blob
+        html2pdf().set(opt).from(element).output('blob').then((pdfBlob) => {
+            const blobUrl = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = opt.filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        });
     };
 
     return (
@@ -78,35 +107,27 @@ const AttendanceReportModal = ({ isOpen, onClose, className }) => {
                             </div>
 
                             {/* Filters */}
-                            <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap gap-4 items-center bg-white">
-                                <div className="flex items-center gap-2">
-                                    <label className="text-sm font-bold text-slate-500">Month:</label>
-                                    <select
-                                        className="bg-slate-50 border-slate-100 text-slate-700 rounded-lg text-sm font-semibold focus:ring-indigo-500 focus:border-indigo-500 px-3 py-1.5"
-                                        value={month}
-                                        onChange={(e) => setMonth(parseInt(e.target.value))}
-                                    >
-                                        {months.map((m, i) => (
-                                            <option key={m} value={i + 1}>{m}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <label className="text-sm font-bold text-slate-500">Year:</label>
-                                    <select
-                                        className="bg-slate-50 border-slate-100 text-slate-700 rounded-lg text-sm font-semibold focus:ring-indigo-500 focus:border-indigo-500 px-3 py-1.5"
-                                        value={year}
-                                        onChange={(e) => setYear(parseInt(e.target.value))}
-                                    >
-                                        {[2024, 2025, 2026, 2027, 2028].map(y => (
-                                            <option key={y} value={y}>{y}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap gap-6 items-center bg-white/80 backdrop-blur-md">
+                                <CustomSelect
+                                    label="Month"
+                                    options={months.map((m, i) => ({ label: m, value: i + 1 }))}
+                                    value={month}
+                                    onChange={setMonth}
+                                    placeholder="Month"
+                                    className="w-44"
+                                />
+                                <CustomSelect
+                                    label="Year"
+                                    options={[2024, 2025, 2026, 2027, 2028]}
+                                    value={year}
+                                    onChange={setYear}
+                                    placeholder="Year"
+                                    className="w-32"
+                                />
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1 overflow-auto p-6">
+                            <div className="flex-1 overflow-auto p-6" ref={reportRef}>
                                 {loading ? (
                                     <div className="h-64 flex flex-col items-center justify-center gap-4">
                                         <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />

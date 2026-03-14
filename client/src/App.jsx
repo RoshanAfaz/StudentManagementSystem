@@ -13,6 +13,8 @@ const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AttendanceReportDashboard = lazy(() => import('./pages/AttendanceReportDashboard'));
+const MarksReportDashboard = lazy(() => import('./pages/MarksReportDashboard'));
 
 function App() {
     return (
@@ -36,6 +38,8 @@ function App() {
                             <Route path="/teacher/marks" element={<ProtectedRoute allowedRoles={['Teacher']}><TeacherDashboard /></ProtectedRoute>} />
                             <Route path="/teacher/timetable" element={<ProtectedRoute allowedRoles={['Teacher']}><TeacherDashboard /></ProtectedRoute>} />
                             <Route path="/teacher/events" element={<ProtectedRoute allowedRoles={['Teacher']}><TeacherDashboard /></ProtectedRoute>} />
+                            <Route path="/teacher/reports" element={<ProtectedRoute allowedRoles={['Teacher', 'Principal']}><AttendanceReportDashboard /></ProtectedRoute>} />
+                            <Route path="/teacher/marks-report" element={<ProtectedRoute allowedRoles={['Teacher', 'Principal']}><MarksReportDashboard /></ProtectedRoute>} />
 
                             <Route path="/student/dashboard" element={<ProtectedRoute allowedRoles={['Student']}><StudentDashboard /></ProtectedRoute>} />
                             <Route path="/student/marks" element={<ProtectedRoute allowedRoles={['Student']}><StudentDashboard /></ProtectedRoute>} />
@@ -48,6 +52,8 @@ function App() {
                             <Route path="/parent/events" element={<ProtectedRoute allowedRoles={['Parent']}><ParentDashboard /></ProtectedRoute>} />
 
                             <Route path="/principal/events" element={<ProtectedRoute allowedRoles={['Principal']}><PrincipalDashboard /></ProtectedRoute>} />
+                            <Route path="/principal/reports" element={<ProtectedRoute allowedRoles={['Principal']}><AttendanceReportDashboard /></ProtectedRoute>} />
+                            <Route path="/principal/marks-report" element={<ProtectedRoute allowedRoles={['Principal', 'Teacher']}><MarksReportDashboard /></ProtectedRoute>} />
                         </Route>
                     </Routes>
                 </Suspense>

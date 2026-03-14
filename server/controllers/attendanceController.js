@@ -140,9 +140,49 @@ const getClassAttendanceReport = async (req, res) => {
     }
 };
 
+// @desc    Get advanced attendance report with custom date range
+// @route   GET /api/attendance/advanced-report
+// @access  Private (Teacher/Principal)
+const getAdvancedAttendanceReport = async (req, res) => {
+    const { className, startDate, endDate, studentId } = req.query;
+
+    try {
+        let query = {};
+
+        if (className) {
+            const students = await Student.find({ className });
+            const studentIds = students.map(s => s._id);
+            query.student = { $in: studentIds };
+        }
+
+        if (studentId) {
+            query.student = studentId;
+        }
+
+        if (startDate && endDate) {
+            query.date = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        }
+
+        const attendanceRecords = await Attendance.find(query)
+            .populate({
+                path: 'student',
+                populate: { path: 'user', select: 'name studentId' }
+            })
+            .sort({ date: 1 });
+
+        res.json(attendanceRecords);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     markAttendance,
     getStudentAttendance,
     saveBulkAttendance,
-    getClassAttendanceReport
+    getClassAttendanceReport,
+    getAdvancedAttendanceReport
 };

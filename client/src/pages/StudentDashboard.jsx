@@ -61,16 +61,18 @@ const StudentDashboard = () => {
             </Card>
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 max-w-2xl bg-white shadow-sm p-1 border">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="marks">My Marks</TabsTrigger>
-                    <TabsTrigger value="attendance">Attendance</TabsTrigger>
-                    <TabsTrigger value="timetable">Timetable</TabsTrigger>
-                    <TabsTrigger value="events" className="relative">
-                        Events
-                        {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
-                    </TabsTrigger>
-                </TabsList>
+                <div className="overflow-x-auto pb-4 -mb-4 no-scrollbar">
+                    <TabsList className="flex w-fit lg:grid lg:w-full lg:grid-cols-5 min-w-max lg:min-w-0 bg-white shadow-sm p-1 border rounded-xl">
+                        <TabsTrigger value="overview" className="rounded-lg px-6 lg:px-2">Overview</TabsTrigger>
+                        <TabsTrigger value="marks" className="rounded-lg px-6 lg:px-2">My Marks</TabsTrigger>
+                        <TabsTrigger value="attendance" className="rounded-lg px-6 lg:px-2">Attendance</TabsTrigger>
+                        <TabsTrigger value="timetable" className="rounded-lg px-6 lg:px-2">Timetable</TabsTrigger>
+                        <TabsTrigger value="events" className="relative rounded-lg px-6 lg:px-2">
+                            Events
+                            {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
                 <motion.div
                     key={activeTab}
@@ -127,15 +129,26 @@ const StudentDashboard = () => {
                                                         <TableRow className="bg-muted/50">
                                                             <TableHead>Subject</TableHead>
                                                             <TableHead className="text-right">Score</TableHead>
-                                                            <TableHead className="text-right">Max Marks</TableHead>
+                                                            <TableHead className="text-right hidden sm:table-cell">Pass Mark</TableHead>
+                                                            <TableHead className="text-right hidden sm:table-cell">Max Marks</TableHead>
+                                                            <TableHead className="text-right">Status</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
                                                         {exam.subjects.map((sub, idx) => (
                                                             <TableRow key={idx}>
-                                                                <TableCell className="font-medium">{sub.subjectName}</TableCell>
-                                                                <TableCell className="text-right">{sub.marksObtained}</TableCell>
-                                                                <TableCell className="text-right">{sub.maxMarks}</TableCell>
+                                                                <TableCell className="font-medium text-sm">{sub.subjectName}</TableCell>
+                                                                <TableCell className="text-right font-bold text-sm">{sub.marksObtained}</TableCell>
+                                                                <TableCell className="text-right text-muted-foreground text-xs hidden sm:table-cell">{sub.passMarks || 35}</TableCell>
+                                                                <TableCell className="text-right text-xs hidden sm:table-cell">{sub.maxMarks}</TableCell>
+                                                                <TableCell className="text-right">
+                                                                    <span className={cn(
+                                                                        "text-[10px] font-black px-1.5 py-0.5 rounded",
+                                                                        sub.marksObtained >= (sub.passMarks || 35) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                                    )}>
+                                                                        {sub.marksObtained >= (sub.passMarks || 35) ? 'PASS' : 'FAIL'}
+                                                                    </span>
+                                                                </TableCell>
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>
@@ -192,7 +205,7 @@ const StudentDashboard = () => {
                                         {timetable.type === 'image' ? (
                                             <div className="border rounded-lg p-2 bg-gray-50 flex justify-center">
                                                 <img
-                                                    src={`http://localhost:5000${timetable.imageUrl}`}
+                                                    src={`${import.meta.env.VITE_API_URL}${timetable.imageUrl}`}
                                                     alt="Timetable"
                                                     className="max-w-full h-auto rounded shadow-sm"
                                                 />

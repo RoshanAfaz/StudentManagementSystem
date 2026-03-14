@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Home, Users, BookOpen, Calendar, FileText, LogOut, GraduationCap, ClipboardList, Clock } from 'lucide-react';
+import { Home, Users, BookOpen, Calendar, FileText, LogOut, GraduationCap, ClipboardList, Clock, BarChart3 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -22,7 +22,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     return (
         <div className={cn(
-            "fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-100 flex flex-col shadow-xl border-r border-slate-800 transition-transform duration-300 ease-in-out md:static md:translate-x-0",
+            "fixed inset-y-0 left-0 z-[60] w-64 bg-slate-900 text-slate-100 flex flex-col shadow-2xl border-r border-slate-800 transition-all duration-300 ease-in-out md:static md:translate-x-0 md:z-auto",
             isOpen ? "translate-x-0" : "-translate-x-full"
         )}>
             <div className="p-6 flex items-center gap-3 border-b border-slate-800">
@@ -38,6 +38,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                         <NavItem to="/principal/dashboard" icon={<Home />} label="Dashboard" active={isActive('/principal/dashboard')} />
                         <NavItem to="/principal/students" icon={<Users />} label="Students" active={isActive('/principal/students')} />
                         <NavItem to="/principal/teachers" icon={<Users />} label="Teachers" active={isActive('/principal/teachers')} />
+                        <NavItem to="/principal/reports" icon={<Clock />} label="Attendance Reports" active={isActive('/principal/reports')} />
+                        <NavItem to="/principal/marks-report" icon={<FileText />} label="Marks Reports" active={isActive('/principal/marks-report')} />
                     </>
                 )}
 
@@ -45,8 +47,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                     <>
                         <NavItem to="/teacher/dashboard" icon={<Home />} label="Dashboard" active={isActive('/teacher/dashboard')} />
                         <NavItem to="/teacher/attendance" icon={<ClipboardList />} label="Attendance" active={isActive('/teacher/attendance')} />
-                        <NavItem to="/teacher/marks" icon={<FileText />} label="Marks" active={isActive('/teacher/marks')} />
+                        <NavItem to="/teacher/marks" icon={<FileText />} label="Marks Management" active={isActive('/teacher/marks')} />
                         <NavItem to="/teacher/timetable" icon={<Clock />} label="Timetable" active={isActive('/teacher/timetable')} />
+                        <NavItem to="/teacher/reports" icon={<Clock />} label="Attendance Reports" active={isActive('/teacher/reports')} />
+                        <NavItem to="/teacher/marks-report" icon={<FileText />} label="Marks Reports" active={isActive('/teacher/marks-report')} />
                     </>
                 )}
 

@@ -50,8 +50,14 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('userInfo');
     };
 
+    const updateUser = (updatedUserInfo) => {
+        const newUserInfo = { ...user, ...updatedUserInfo };
+        setUser(newUserInfo);
+        localStorage.setItem('userInfo', JSON.stringify(newUserInfo));
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login: loginAction, logout, loading }}>
+        <AuthContext.Provider value={{ user, login: loginAction, logout, updateUser, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

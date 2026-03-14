@@ -14,7 +14,8 @@ const marksSchema = new mongoose.Schema({
         {
             subjectName: { type: String, required: true },
             marksObtained: { type: Number, required: true },
-            maxMarks: { type: Number, required: true }
+            maxMarks: { type: Number, required: true },
+            passMarks: { type: Number, default: 35 } // Default pass marks
         }
     ],
     grandTotalObtained: {

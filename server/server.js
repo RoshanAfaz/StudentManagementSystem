@@ -25,6 +25,7 @@ app.use('/api/marks', require('./routes/marksRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/timetable', require('./routes/timetableRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 // Serve Uploads
 app.use('/uploads', express.static('uploads'));

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Label } from './Label';
+import CustomSelect from './CustomSelect';
 
 const GRADES = ['Pre-KG', 'LKG', 'UKG', ...Array.from({ length: 12 }, (_, i) => (i + 1).toString())];
 // Standard sections + common streams + Other option
@@ -80,39 +81,49 @@ const ClassSelector = ({ value, onChange, label = "Class", required = false }) =
     return (
         <div className="space-y-1">
             <Label>{label} {required && <span className="text-red-500">*</span>}</Label>
-            <div className="flex gap-2">
-                <select
+            <div className="flex gap-3 items-end">
+                <CustomSelect
+                    label="Grade"
+                    options={GRADES}
                     value={grade}
-                    onChange={handleGradeChange}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    required={required}
-                >
-                    <option value="">Grade</option>
-                    {GRADES.map(g => (
-                        <option key={g} value={g}>{g}</option>
-                    ))}
-                </select>
-                <select
+                    onChange={(val) => {
+                        setGrade(val);
+                        updateParent(val, section, customSection);
+                    }}
+                    placeholder="Grade"
+                    className="flex-1"
+                />
+
+                <CustomSelect
+                    label="Sec/Stream"
+                    options={SECTIONS}
                     value={section}
-                    onChange={handleSectionChange}
-                    className="flex h-10 w-28 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    required={required}
-                >
-                    <option value="">Sec/Stream</option>
-                    {SECTIONS.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                    ))}
-                </select>
+                    onChange={(val) => {
+                        setSection(val);
+                        if (val !== 'Other') {
+                            setCustomSection('');
+                            updateParent(grade, val, '');
+                        } else {
+                            updateParent(grade, 'Other', customSection);
+                        }
+                    }}
+                    placeholder="Sec/Stream"
+                    className="w-36"
+                />
+
                 {section === 'Other' && (
-                    <input
-                        type="text"
-                        value={customSection}
-                        onChange={handleCustomSectionChange}
-                        placeholder="CUSTOM"
-                        className="flex h-10 w-24 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 uppercase"
-                        required={required}
-                        maxLength={6}
-                    />
+                    <div className="space-y-1">
+                        <Label>Custom</Label>
+                        <input
+                            type="text"
+                            value={customSection}
+                            onChange={handleCustomSectionChange}
+                            placeholder="CUSTOM"
+                            className="flex h-11 w-24 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition-all hover:border-indigo-300 hover:shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none uppercase"
+                            required={required}
+                            maxLength={6}
+                        />
+                    </div>
                 )}
             </div>
         </div>

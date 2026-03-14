@@ -106,12 +106,25 @@ const ParentDashboard = () => {
                                                                 </span>
                                                             </div>
                                                             <Table>
-                                                                <TableHeader><TableRow className="h-8 bg-muted/30"><TableHead className="h-8 py-1">Subject</TableHead><TableHead className="h-8 py-1 text-right">Score</TableHead></TableRow></TableHeader>
+                                                                <TableHeader>
+                                                                    <TableRow className="h-8 bg-muted/30">
+                                                                        <TableHead className="h-8 py-1">Subject</TableHead>
+                                                                        <TableHead className="h-8 py-1 text-right">Score</TableHead>
+                                                                        <TableHead className="h-8 py-1 text-right">Pass Mark</TableHead>
+                                                                        <TableHead className="h-8 py-1 text-right">Status</TableHead>
+                                                                    </TableRow>
+                                                                </TableHeader>
                                                                 <TableBody>
                                                                     {exam.subjects.map((sub, idx) => (
                                                                         <TableRow key={idx} className="h-8 border-none">
                                                                             <TableCell className="py-1">{sub.subjectName}</TableCell>
                                                                             <TableCell className="py-1 text-right font-medium">{sub.marksObtained} / {sub.maxMarks}</TableCell>
+                                                                            <TableCell className="py-1 text-right text-xs text-muted-foreground">{sub.passMarks || 35}</TableCell>
+                                                                            <TableCell className="py-1 text-right">
+                                                                                <span className={sub.marksObtained >= (sub.passMarks || 35) ? 'text-green-600 font-bold text-xs' : 'text-red-500 font-bold text-xs'}>
+                                                                                    {sub.marksObtained >= (sub.passMarks || 35) ? 'PASS' : 'FAIL'}
+                                                                                </span>
+                                                                            </TableCell>
                                                                         </TableRow>
                                                                     ))}
                                                                 </TableBody>
@@ -155,7 +168,7 @@ const ParentDashboard = () => {
                                                 {timetable.type === 'image' ? (
                                                     <div className="border rounded-lg overflow-hidden">
                                                         <img
-                                                            src={`http://localhost:5000${timetable.imageUrl}`}
+                                                            src={`${import.meta.env.VITE_API_URL}${timetable.imageUrl}`}
                                                             alt="Timetable"
                                                             className="w-full h-auto object-contain"
                                                         />

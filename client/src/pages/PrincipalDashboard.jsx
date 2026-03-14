@@ -127,16 +127,18 @@ const PrincipalDashboard = () => {
             )}
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 max-w-3xl bg-white/50 backdrop-blur-md shadow-lg p-1.5 border-white/50 rounded-2xl">
-                    <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Overview</TabsTrigger>
-                    <TabsTrigger value="teachers" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Teachers</TabsTrigger>
-                    <TabsTrigger value="students" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Students</TabsTrigger>
-                    <TabsTrigger value="events" className="relative rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
-                        Events
-                        {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
-                        {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
-                    </TabsTrigger>
-                </TabsList>
+                <div className="overflow-x-auto pb-4 -mb-4 no-scrollbar">
+                    <TabsList className="flex w-fit md:grid md:w-full md:grid-cols-4 min-w-max md:min-w-0 bg-white/50 backdrop-blur-md shadow-lg p-1.5 border-white/50 rounded-2xl">
+                        <TabsTrigger value="overview" className="rounded-xl px-8 md:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Overview</TabsTrigger>
+                        <TabsTrigger value="teachers" className="rounded-xl px-8 md:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Teachers</TabsTrigger>
+                        <TabsTrigger value="students" className="rounded-xl px-8 md:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Students</TabsTrigger>
+                        <TabsTrigger value="events" className="relative rounded-xl px-8 md:px-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+                            Events
+                            {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
+                            {hasUnread && <span className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
                 <div className="mt-6">
                     <TabsContent value="overview">
@@ -208,14 +210,19 @@ const PrincipalDashboard = () => {
                                     <div className="overflow-x-auto">
                                         <Table>
                                             <TableHeader>
-                                                <TableRow><TableHead>Name</TableHead><TableHead>Subject</TableHead><TableHead>Qualification</TableHead><TableHead className="text-right">Action</TableHead></TableRow>
+                                                <TableRow><TableHead>Name</TableHead><TableHead className="hidden sm:table-cell">Subject</TableHead><TableHead className="hidden lg:table-cell">Qualification</TableHead><TableHead className="text-right">Action</TableHead></TableRow>
                                             </TableHeader>
                                             <TableBody>
                                                 {teachers.map(t => (
                                                     <TableRow key={t._id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedUser({ type: 'teacher', data: t })}>
-                                                        <TableCell className="font-medium">{t.user?.name || 'Unknown'}</TableCell>
-                                                        <TableCell>{t.subject}</TableCell>
-                                                        <TableCell>{t.qualification || 'N/A'}</TableCell>
+                                                        <TableCell className="font-medium">
+                                                            <div className="flex flex-col">
+                                                                <span>{t.user?.name || 'Unknown'}</span>
+                                                                <span className="text-xs text-muted-foreground sm:hidden">{t.subject}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="hidden sm:table-cell">{t.subject}</TableCell>
+                                                        <TableCell className="hidden lg:table-cell">{t.qualification || 'N/A'}</TableCell>
                                                         <TableCell className="text-right"><span className="text-primary text-sm font-medium">View</span></TableCell>
                                                     </TableRow>
                                                 ))}
@@ -241,14 +248,19 @@ const PrincipalDashboard = () => {
                                     <div className="overflow-x-auto">
                                         <Table>
                                             <TableHeader>
-                                                <TableRow><TableHead>Name</TableHead><TableHead>Class</TableHead><TableHead>Roll No</TableHead><TableHead className="text-right">Action</TableHead></TableRow>
+                                                <TableRow><TableHead>Name</TableHead><TableHead className="hidden sm:table-cell">Class</TableHead><TableHead className="hidden lg:table-cell">Roll No</TableHead><TableHead className="text-right">Action</TableHead></TableRow>
                                             </TableHeader>
                                             <TableBody>
                                                 {students.map(s => (
                                                     <TableRow key={s._id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedUser({ type: 'student', data: s })}>
-                                                        <TableCell className="font-medium">{s.user?.name || 'Unknown'}</TableCell>
-                                                        <TableCell>{s.className}</TableCell>
-                                                        <TableCell>{s.rollNumber || 'N/A'}</TableCell>
+                                                        <TableCell className="font-medium">
+                                                            <div className="flex flex-col">
+                                                                <span>{s.user?.name || 'Unknown'}</span>
+                                                                <span className="text-xs text-muted-foreground sm:hidden">{s.className}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="hidden sm:table-cell">{s.className}</TableCell>
+                                                        <TableCell className="hidden lg:table-cell">{s.rollNumber || 'N/A'}</TableCell>
                                                         <TableCell className="text-right"><span className="text-primary text-sm font-medium">View</span></TableCell>
                                                     </TableRow>
                                                 ))}

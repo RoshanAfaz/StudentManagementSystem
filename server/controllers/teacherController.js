@@ -158,7 +158,7 @@ const getTeachersByClass = async (req, res) => {
             assignedClasses: { $regex: new RegExp(`^\\s*${className}\\s*$`, 'i') }
         }).populate('user', 'name email phone');
 
-        console.log(`Fetching teachers for class: ${className}, Found: ${teachers.length}`);
+
         res.json(teachers);
     } catch (error) {
         console.error("Error fetching teachers:", error);

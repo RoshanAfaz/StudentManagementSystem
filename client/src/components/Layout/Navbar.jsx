@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Bell, User, Lock, Menu } from 'lucide-react';
 import { Button } from '../UI/Button';
 import ChangePasswordModal from '../UI/ChangePasswordModal';
+import ProfileModal from '../UI/ProfileModal';
 import useEventBadge from '../../hooks/useEventBadge';
 
 const Navbar = ({ onToggleSidebar }) => {
@@ -11,6 +12,7 @@ const Navbar = ({ onToggleSidebar }) => {
     const navigate = useNavigate();
     const { hasUnread } = useEventBadge();
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     const handleNotificationClick = () => {
         if (user?.role) {
@@ -25,8 +27,11 @@ const Navbar = ({ onToggleSidebar }) => {
                     <Button variant="ghost" size="icon" className="md:hidden" onClick={onToggleSidebar}>
                         <Menu className="w-6 h-6" />
                     </Button>
-                    <div>
-                        <h2 className="text-lg font-semibold text-gray-800">
+                    <div 
+                        className="cursor-pointer group"
+                        onClick={() => setIsProfileModalOpen(true)}
+                    >
+                        <h2 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors">
                             Welcome back, <span className="text-primary">{user?.name}</span>
                         </h2>
                         <p className="text-xs text-muted-foreground capitalize">{user?.role} Dashboard</p>
@@ -56,9 +61,16 @@ const Navbar = ({ onToggleSidebar }) => {
                         )}
                     </Button>
 
-                    <div className="flex items-center space-x-3 pl-4 border-l">
-                        <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold shadow-sm border border-primary/20">
-                            {user?.name?.charAt(0)}
+                    <div 
+                        className="flex items-center space-x-3 pl-4 border-l cursor-pointer group"
+                        onClick={() => setIsProfileModalOpen(true)}
+                    >
+                        <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold shadow-sm border border-primary/20 overflow-hidden group-hover:ring-2 group-hover:ring-primary/20 transition-all">
+                            {user?.avatarUrl ? (
+                                <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                            ) : (
+                                user?.name?.charAt(0)
+                            )}
                         </div>
                     </div>
                 </div>
@@ -67,6 +79,11 @@ const Navbar = ({ onToggleSidebar }) => {
             <ChangePasswordModal
                 isOpen={isPasswordModalOpen}
                 onClose={() => setIsPasswordModalOpen(false)}
+            />
+
+            <ProfileModal 
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
             />
         </>
     );
