@@ -15,11 +15,11 @@ import { Input } from '../components/UI/Input';
 import { Label } from '../components/UI/Label';
 import ClassSelector from '../components/UI/ClassSelector';
 import { motion, AnimatePresence, animate } from 'framer-motion';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Filler } from 'chart.js';
 import { Pie, Line } from 'react-chartjs-2';
 import { X } from 'lucide-react';
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Filler);
 
 const PrincipalDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
