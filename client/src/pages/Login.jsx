@@ -67,8 +67,8 @@ const Login = () => {
             initial={false}
             animate={{ backgroundColor: currentRole.bgColor }}
         >
-            {/* Animated Background Blobs */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+            {/* Animated Background Blobs - Disabled on mobile for performance */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none hidden md:block">
                 <motion.div
                     animate={{
                         scale: [1, 1.2, 1],
@@ -98,9 +98,9 @@ const Login = () => {
                 className="z-10 w-full max-w-md px-4"
             >
 
-                <Card className="shadow-2xl border-white/20 backdrop-blur-xl bg-white/80 overflow-hidden relative group">
-                    {/* Subtle Shine Effect on Card */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                <Card className="shadow-2xl border-white/20 md:backdrop-blur-xl bg-white md:bg-white/80 overflow-hidden relative group">
+                    {/* Subtle Shine Effect - Only on hover/Desktop */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 hidden md:block" />
 
                     <CardHeader className="text-center space-y-2 pb-2">
                         <motion.div
