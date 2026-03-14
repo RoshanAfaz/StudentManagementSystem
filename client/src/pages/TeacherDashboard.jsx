@@ -340,17 +340,17 @@ const TeacherDashboard = () => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-8 text-white shadow-xl mb-8"
+                className="relative overflow-hidden rounded-xl md:rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-6 md:p-8 text-white shadow-xl mb-4 md:mb-8"
             >
                 <div className="relative z-10">
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome Back, {user?.name || 'Teacher'}</h1>
-                    <p className="text-emerald-100 max-w-xl">
+                    <h1 className="text-xl md:text-3xl font-bold tracking-tight mb-2 text-center md:text-left">Welcome Back, {user?.name || 'Teacher'}</h1>
+                    <p className="text-emerald-100 text-sm md:text-base max-w-xl text-center md:text-left">
                         Your classroom management hub. Check attendance, manage marks, and stay updated with school events.
                     </p>
                 </div>
                 {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl hidden md:block"></div>
+                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-2xl hidden md:block"></div>
             </motion.div>
 
             <div className="hidden">
@@ -379,29 +379,29 @@ const TeacherDashboard = () => {
                 </div>
 
                 <div className="mt-6">
-                    <TabsContent value="students">
-                        <Card glass className="border-0 shadow-lg p-6">
-                            <div className="flex justify-between items-center mb-8">
+                    <TabsContent value="students" className="mt-0">
+                        <Card glass className="border-0 shadow-lg p-3 md:p-6">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold tracking-tight text-slate-800">Students Directory</h2>
-                                    <p className="text-slate-500 text-sm">Manage and monitor your assigned student records.</p>
+                                    <h2 className="text-xl md:text-2xl font-bold tracking-tight text-slate-800">Students Directory</h2>
+                                    <p className="text-slate-500 text-xs md:text-sm font-medium">Manage and monitor student records.</p>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">
+                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                             {students.length} Students
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex gap-3">
-                                    <Button variant="outline" size="icon" onClick={fetchStudents} title="Reload list" className="rounded-xl">
+                                <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                                    <Button variant="outline" size="icon" onClick={fetchStudents} title="Reload list" className="rounded-xl h-9 w-9">
                                         <RotateCcw className="w-4 h-4" />
                                     </Button>
-                                    <Button variant="premium" onClick={() => setShowAddStudent(true)} className="rounded-xl">
+                                    <Button variant="premium" onClick={() => setShowAddStudent(true)} className="rounded-xl h-9 text-xs flex-1 md:flex-none">
                                         <UserPlus className="w-4 h-4 mr-2" />
-                                        Add Student
+                                        Add
                                     </Button>
-                                    <Button variant="glass" onClick={() => setShowBulkUpload(true)} className="rounded-xl text-slate-700">
+                                    <Button variant="glass" onClick={() => setShowBulkUpload(true)} className="rounded-xl h-9 text-xs flex-1 md:flex-none text-slate-700 font-bold">
                                         <FileSpreadsheet className="w-4 h-4 mr-2 text-emerald-600" />
-                                        Bulk Import
+                                        Bulk
                                     </Button>
                                 </div>
                             </div>

@@ -102,17 +102,17 @@ const PrincipalDashboard = () => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white shadow-xl mb-8"
+                className="relative overflow-hidden rounded-xl md:rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 p-6 md:p-8 text-white shadow-xl mb-4 md:mb-8"
             >
                 <div className="relative z-10">
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome Back, Principal</h1>
-                    <p className="text-purple-100 max-w-xl">
+                    <h1 className="text-xl md:text-3xl font-bold tracking-tight mb-2 text-center md:text-left">Welcome Back, Principal</h1>
+                    <p className="text-purple-100 text-sm md:text-base max-w-xl text-center md:text-left">
                         Here's what's happening in your school today. You have <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-md">{hasUnread ? 'new' : 'no new'}</span> notifications.
                     </p>
                 </div>
                 {/* Decorative Circles */}
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl hidden md:block"></div>
+                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-2xl hidden md:block"></div>
             </motion.div>
 
             <div className="flex justify-between items-center hidden">
@@ -142,10 +142,10 @@ const PrincipalDashboard = () => {
 
                 <div className="mt-6">
                     <TabsContent value="overview">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <StatCard title="Total Students" value={stats.students} icon={<GraduationCap className="h-8 w-8" />} color="text-blue-600" />
-                            <StatCard title="Total Teachers" value={stats.teachers} icon={<UserCheck className="h-8 w-8" />} color="text-emerald-600" />
-                            <StatCard title="Total Users" value={stats.users} icon={<Users className="h-8 w-8" />} color="text-purple-600" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                            <StatCard title="Total Students" value={stats.students} icon={<GraduationCap className="h-6 w-6 md:h-8 md:w-8" />} color="text-blue-600" />
+                            <StatCard title="Total Teachers" value={stats.teachers} icon={<UserCheck className="h-6 w-6 md:h-8 md:w-8" />} color="text-emerald-600" />
+                            <StatCard title="Total Users" value={stats.users} icon={<Users className="h-6 w-6 md:h-8 md:w-8" />} color="text-purple-600" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card glass className="border-0">
