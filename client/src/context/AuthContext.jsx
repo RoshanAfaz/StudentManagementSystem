@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
     // Re-implementing simplified version
     const loginAction = async (credentials) => {
         try {
+            console.log('Attempting login with API URL:', axios.defaults.baseURL || 'NULL (relative)');
             const { data } = await axios.post('/api/auth/login', credentials);
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));
