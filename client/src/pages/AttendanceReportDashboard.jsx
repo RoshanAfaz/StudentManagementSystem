@@ -15,7 +15,21 @@ import {
     Users,
     CheckCircle2,
     XCircle,
-    Plus, Search, FileText, Filter, LayoutGrid, List, MoreVertical, X, Calendar, MapPin, Phone, Mail, User, GraduationCap, School, Check, ChevronDown, CheckCircle2, XCircle, BarChart3, Clock, ArrowRight, Download
+    Plus,
+    FileText,
+    LayoutGrid,
+    List,
+    MoreVertical,
+    X,
+    MapPin,
+    Phone,
+    Mail,
+    User,
+    GraduationCap,
+    School,
+    Check,
+    Clock,
+    ArrowRight
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../components/UI/Card';
 import { Button } from '../components/UI/Button';
