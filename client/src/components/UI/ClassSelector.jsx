@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Label } from './Label';
 import CustomSelect from './CustomSelect';
 
-const GRADES = ['Pre-KG', 'LKG', 'UKG', ...Array.from({ length: 12 }, (_, i) => (i + 1).toString())];
+const GRADES = ['PreKG', 'LKG', 'UKG', ...Array.from({ length: 12 }, (_, i) => (i + 1).toString())];
 // Standard sections + common streams + Other option
 const SECTIONS = [
     ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)), // A-Z

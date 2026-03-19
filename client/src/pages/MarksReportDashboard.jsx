@@ -3,9 +3,9 @@ import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    BarChart3, 
-    FileSpreadsheet, 
+import {
+    BarChart3,
+    FileSpreadsheet,
     Download,
     Users,
     CheckCircle2,
@@ -28,13 +28,14 @@ import ClassSelector from '../components/UI/ClassSelector';
 import CustomSelect from '../components/UI/CustomSelect';
 import { cn } from '../lib/utils';
 import * as XLSX from 'xlsx';
-import { 
-    Chart as ChartJS, 
-    CategoryScale, 
-    LinearScale, 
-    BarElement, 
-    Title, 
-    Tooltip, 
+import { downloadFile } from '../lib/downloadHelper';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
     Legend,
     ArcElement,
     PointElement,
@@ -80,9 +81,9 @@ const MarksReportDashboard = () => {
                 const { data } = await axios.get('/api/marks/exam-types', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 const defaults = ['Midterm', 'Final', 'Quarterly', 'Half Yearly', 'Unit Test', 'CAT 1', 'CAT 2'];
-                
+
                 if (data && data.length > 0) {
                     // Combine database types with defaults, removing duplicates (case-insensitive)
                     const combined = [...data];
@@ -130,7 +131,7 @@ const MarksReportDashboard = () => {
             const percentage = ((record.grandTotalObtained / record.grandTotalMax) * 100).toFixed(1);
             // Student passes only if they exceed passMarks in EVERY subject
             const hasFailedAny = record.subjects.some(sub => sub.marksObtained < (sub.passMarks || 35));
-            
+
             return {
                 id: record.student._id,
                 name: record.student.user.name,
@@ -178,7 +179,7 @@ const MarksReportDashboard = () => {
         if (className) fetchReport();
     }, [className, examType]);
 
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
         if (reportData.length === 0) return;
 
         const excelData = reportData.map(s => {
@@ -188,7 +189,7 @@ const MarksReportDashboard = () => {
                 'Exam': s.examType,
                 'Total Marks': s.totalObtained,
                 'Max Marks': s.totalMax,
-                'Percentage (%)': s.percentage,
+                'Percentage': s.percentage + '%',
                 'Status': s.status
             };
             s.subjects.forEach(sub => {
@@ -201,7 +202,8 @@ const MarksReportDashboard = () => {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Marks Report");
         const filename = `Marks_Report_${className}_${examType || 'All'}.xlsx`;
-        XLSX.writeFile(workbook, filename);
+        const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+        await downloadFile(wbout, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     };
 
     const downloadPDF = () => {
@@ -209,29 +211,20 @@ const MarksReportDashboard = () => {
 
         const element = reportRef.current;
         const opt = {
-            margin:       [10, 10, 10, 10],
-            filename:     `Marks_Report_${className}_${examType || 'All'}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
+            margin: [10, 10, 10, 10],
+            filename: `Marks_Report_${className}_${examType || 'All'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
                 useCORS: true,
                 logging: false,
                 letterRendering: true
             },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
 
-        html2pdf().set(opt).from(element).output('blob').then((pdfBlob) => {
-            // Force download by creating a blob url and triggering a click
-            const blobUrl = URL.createObjectURL(pdfBlob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = opt.filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        html2pdf().set(opt).from(element).output('blob').then(async (pdfBlob) => {
+            await downloadFile(pdfBlob, opt.filename, 'application/pdf');
         });
     };
 
@@ -249,10 +242,10 @@ const MarksReportDashboard = () => {
     };
 
     const topStudentsData = {
-        labels: reportData.sort((a,b) => b.percentage - a.percentage).slice(0, 5).map(s => s.name),
+        labels: reportData.sort((a, b) => b.percentage - a.percentage).slice(0, 5).map(s => s.name),
         datasets: [{
             label: 'Top Performers (%)',
-            data: reportData.sort((a,b) => b.percentage - a.percentage).slice(0, 5).map(s => s.percentage),
+            data: reportData.sort((a, b) => b.percentage - a.percentage).slice(0, 5).map(s => s.percentage),
             backgroundColor: 'rgba(16, 185, 129, 0.6)',
             borderRadius: 8
         }]
@@ -260,23 +253,23 @@ const MarksReportDashboard = () => {
 
     return (
         <div className="p-4 sm:p-8 space-y-8 bg-slate-50 min-h-screen">
-             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Academic Analytics</h1>
                     <p className="text-slate-500 font-medium">Performance tracking and grade distribution reports.</p>
                 </motion.div>
 
                 <div className="flex gap-3">
-                    <Button 
-                        onClick={exportToExcel} 
+                    <Button
+                        onClick={exportToExcel}
                         disabled={reportData.length === 0}
                         variant="outline"
                         className="rounded-xl px-4 font-bold border-indigo-200 text-indigo-700 hover:bg-indigo-50 gap-2"
                     >
                         <FileSpreadsheet className="w-5 h-5 text-indigo-500" /> Excel
                     </Button>
-                    <Button 
-                        onClick={downloadPDF} 
+                    <Button
+                        onClick={downloadPDF}
                         disabled={reportData.length === 0}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 shadow-lg shadow-emerald-100 font-bold gap-2"
                     >
@@ -294,19 +287,19 @@ const MarksReportDashboard = () => {
                             <ClassSelector value={className} onChange={setClassName} />
                         </div>
                         <div className="space-y-2">
-                            <CustomSelect 
+                            <CustomSelect
                                 label="Exam Type"
-                                options={["", ...examTypes].map(type => ({ 
-                                    label: type || "All Exams", 
-                                    value: type 
+                                options={["", ...examTypes].map(type => ({
+                                    label: type || "All Exams",
+                                    value: type
                                 }))}
                                 value={examType}
                                 onChange={setExamType}
                                 placeholder="All Exams"
                             />
                         </div>
-                        <Button 
-                            onClick={fetchReport} 
+                        <Button
+                            onClick={fetchReport}
                             disabled={loading || !className}
                             className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-11 font-bold gap-2"
                         >
@@ -326,127 +319,127 @@ const MarksReportDashboard = () => {
                     <StatCard title="Pass Percentage" value={`${((overview.passingStudents / (overview.totalStudents || 1)) * 100).toFixed(1)}%`} icon={<CheckCircle2 />} color="bg-emerald-600" />
                 </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Subject Performance */}
-                <Card className="border-none shadow-sm rounded-3xl bg-white border border-slate-100">
-                    <CardHeader>
-                        <CardTitle className="text-xl font-bold flex items-center gap-2">
-                            <BookOpen className="w-5 h-5 text-indigo-600" /> Subject-wise Averages
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-[350px]">
-                        {subjectStats.length > 0 ? (
-                            <Bar 
-                                data={barData} 
-                                options={{ 
-                                    responsive: true, 
-                                    maintainAspectRatio: false,
-                                    scales: { y: { beginAtZero: true, max: 100 } }
-                                }} 
-                            />
-                        ) : (
-                            <div className="h-full flex items-center justify-center text-slate-400">No data available</div>
-                        )}
-                    </CardContent>
-                </Card>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Subject Performance */}
+                    <Card className="border-none shadow-sm rounded-3xl bg-white border border-slate-100">
+                        <CardHeader>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                                <BookOpen className="w-5 h-5 text-indigo-600" /> Subject-wise Averages
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="h-[350px]">
+                            {subjectStats.length > 0 ? (
+                                <Bar
+                                    data={barData}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: { y: { beginAtZero: true, max: 100 } }
+                                    }}
+                                />
+                            ) : (
+                                <div className="h-full flex items-center justify-center text-slate-400">No data available</div>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                {/* Top Performers */}
-                <Card className="border-none shadow-sm rounded-3xl bg-white border border-slate-100">
-                    <CardHeader>
-                        <CardTitle className="text-xl font-bold flex items-center gap-2">
-                            <Trophy className="w-5 h-5 text-amber-500" /> Top Performers
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-[350px]">
-                         {reportData.length > 0 ? (
-                            <Bar 
-                                data={topStudentsData} 
-                                options={{ 
-                                    indexAxis: 'y',
-                                    responsive: true, 
-                                    maintainAspectRatio: false,
-                                    scales: { x: { beginAtZero: true, max: 100 } }
-                                }} 
-                            />
-                        ) : (
-                            <div className="h-full flex items-center justify-center text-slate-400">No data available</div>
-                        )}
-                    </CardContent>
-                </Card>
+                    {/* Top Performers */}
+                    <Card className="border-none shadow-sm rounded-3xl bg-white border border-slate-100">
+                        <CardHeader>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-amber-500" /> Top Performers
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="h-[350px]">
+                            {reportData.length > 0 ? (
+                                <Bar
+                                    data={topStudentsData}
+                                    options={{
+                                        indexAxis: 'y',
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: { x: { beginAtZero: true, max: 100 } }
+                                    }}
+                                />
+                            ) : (
+                                <div className="h-full flex items-center justify-center text-slate-400">No data available</div>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                {/* Marks Table */}
-                <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl bg-white overflow-hidden border border-slate-100">
-                    <CardHeader className="border-b border-slate-50">
-                        <CardTitle className="text-xl font-bold">Consolidated Marks List</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 overflow-x-auto">
-                        {reportData.length > 0 ? (
-                            <Table>
-                                <TableHeader className="bg-slate-50/50">
-                                    <TableRow>
-                                        <TableHead className="font-bold text-slate-600">Student Name</TableHead>
-                                        <TableHead className="text-center font-bold text-slate-600">Exam</TableHead>
-                                        <TableHead className="text-center font-bold text-slate-600">Total Marks</TableHead>
-                                        <TableHead className="text-center font-bold text-slate-600">Percentage</TableHead>
-                                        <TableHead className="text-right pr-8 font-bold text-slate-600">Status</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {reportData.map((row) => (
-                                        <TableRow key={row.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <TableCell className="font-bold text-slate-900">
-                                                <div className="flex flex-col">
-                                                    <span>{row.name}</span>
-                                                    <span className="text-[10px] text-slate-400 font-mono uppercase tracking-tighter">ID: {row.studentId}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-center font-medium text-slate-600">{row.examType}</TableCell>
-                                            <TableCell className="text-center">
-                                                <span className="font-bold text-slate-700">{row.totalObtained}</span>
-                                                <span className="text-slate-400">/{row.totalMax}</span>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <span className={cn(
-                                                        "text-sm font-bold",
-                                                        row.percentage >= 75 ? "text-emerald-600" : row.percentage >= 40 ? "text-amber-500" : "text-rose-500"
-                                                    )}>
-                                                        {row.percentage}%
-                                                    </span>
-                                                    <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div 
-                                                            className={cn(
-                                                                "h-full rounded-full",
-                                                                row.percentage >= 75 ? "bg-emerald-500" : row.percentage >= 40 ? "bg-amber-400" : "bg-rose-400"
-                                                            )}
-                                                            style={{ width: `${row.percentage}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-right pr-8">
-                                                <span className={cn(
-                                                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-tighter shadow-sm",
-                                                    row.status === 'Pass' 
-                                                        ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
-                                                        : "bg-rose-50 text-rose-700 border-rose-100"
-                                                )}>
-                                                    {row.status}
-                                                </span>
-                                            </TableCell>
+                    {/* Marks Table */}
+                    <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl bg-white overflow-hidden border border-slate-100">
+                        <CardHeader className="border-b border-slate-50">
+                            <CardTitle className="text-xl font-bold">Consolidated Marks List</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 overflow-x-auto">
+                            {reportData.length > 0 ? (
+                                <Table>
+                                    <TableHeader className="bg-slate-50/50">
+                                        <TableRow>
+                                            <TableHead className="font-bold text-slate-600">Student Name</TableHead>
+                                            <TableHead className="text-center font-bold text-slate-600">Exam</TableHead>
+                                            <TableHead className="text-center font-bold text-slate-600">Total Marks</TableHead>
+                                            <TableHead className="text-center font-bold text-slate-600">Percentage</TableHead>
+                                            <TableHead className="text-right pr-8 font-bold text-slate-600">Status</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        ) : (
-                            <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-4">
-                                <Search className="w-12 h-12 text-slate-200" />
-                                <p className="font-medium">Please select a class to view metrics.</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {reportData.map((row) => (
+                                            <TableRow key={row.id} className="hover:bg-slate-50/50 transition-colors">
+                                                <TableCell className="font-bold text-slate-900">
+                                                    <div className="flex flex-col">
+                                                        <span>{row.name}</span>
+                                                        <span className="text-[10px] text-slate-400 font-mono uppercase tracking-tighter">ID: {row.studentId}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-center font-medium text-slate-600">{row.examType}</TableCell>
+                                                <TableCell className="text-center">
+                                                    <span className="font-bold text-slate-700">{row.totalObtained}</span>
+                                                    <span className="text-slate-400">/{row.totalMax}</span>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <div className="flex flex-col items-center gap-1">
+                                                        <span className={cn(
+                                                            "text-sm font-bold",
+                                                            row.percentage >= 75 ? "text-emerald-600" : row.percentage >= 40 ? "text-amber-500" : "text-rose-500"
+                                                        )}>
+                                                            {row.percentage}%
+                                                        </span>
+                                                        <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={cn(
+                                                                    "h-full rounded-full",
+                                                                    row.percentage >= 75 ? "bg-emerald-500" : row.percentage >= 40 ? "bg-amber-400" : "bg-rose-400"
+                                                                )}
+                                                                style={{ width: `${row.percentage}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-right pr-8">
+                                                    <span className={cn(
+                                                        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-tighter shadow-sm",
+                                                        row.status === 'Pass'
+                                                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                                                            : "bg-rose-50 text-rose-700 border-rose-100"
+                                                    )}>
+                                                        {row.status}
+                                                    </span>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            ) : (
+                                <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                                    <Search className="w-12 h-12 text-slate-200" />
+                                    <p className="font-medium">Please select a class to view metrics.</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     );

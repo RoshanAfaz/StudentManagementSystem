@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../UI/Table';
 import { cn } from '../../lib/utils';
 import Portal from '../UI/Portal';
+import { downloadFile } from '../../lib/downloadHelper';
 
 const AttendanceReportModal = ({ isOpen, onClose, className }) => {
     const [reportData, setReportData] = useState([]);
@@ -48,29 +49,22 @@ const AttendanceReportModal = ({ isOpen, onClose, className }) => {
 
         const element = reportRef.current;
         const opt = {
-            margin:       [10, 10, 10, 10],
-            filename:     `Attendance_Report_${className}_${months[month - 1]}_${year}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
+            margin: [10, 10, 10, 10],
+            filename: `Attendance_Report_${className}_${months[month - 1]}_${year}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
                 useCORS: true,
                 logging: false,
                 letterRendering: true
             },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
 
-        // Force download by creating a blob
-        html2pdf().set(opt).from(element).output('blob').then((pdfBlob) => {
-            const blobUrl = URL.createObjectURL(pdfBlob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = opt.filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        // Use the universal download helper
+        html2pdf().set(opt).from(element).output('blob').then(async (pdfBlob) => {
+            const filename = `Attendance_Report_${className}_${months[month - 1]}_${year}.pdf`;
+            await downloadFile(pdfBlob, filename, 'application/pdf');
         });
     };
 

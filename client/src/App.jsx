@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { AuthProvider } from './context/AuthContext';
 import MainLayout from './components/Layout/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -22,7 +23,7 @@ function App() {
             <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <Suspense fallback={<PageLoader />}>
                     <Routes>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={Capacitor.isNativePlatform() ? <Navigate to="/login" replace /> : <Home />} />
                         <Route path="/login" element={<Login />} />
 
                         {/* Protected Routes */}

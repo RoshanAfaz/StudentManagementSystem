@@ -30,9 +30,11 @@ const Navbar = () => {
         <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 w-full z-50 transition-all duration-300 px-6 md:px-12 py-4 ${isScrolled || isMobileMenuOpen ? 'bg-white/90 backdrop-blur-lg shadow-sm' : 'bg-transparent'
+            className={`fixed top-0 w-full z-50 transition-all duration-300 px-6 md:px-12 pt-[var(--sat,1rem)] pb-4 lg:py-4 ${isScrolled || isMobileMenuOpen ? 'bg-white/90 backdrop-blur-lg shadow-sm' : 'bg-transparent'
                 }`}
+            style={{ '--sat': 'env(safe-area-inset-top, 24px)' }}
         >
+
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">

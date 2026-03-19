@@ -635,17 +635,17 @@ const TeacherDashboard = () => {
                                                         required
                                                     />
                                                 </div>
-                                                 <div className="col-span-3 space-y-1">
-                                                     <Label>Pass</Label>
-                                                     <Input
-                                                         type="number"
-                                                         value={sub.passMarks}
-                                                         onChange={(e) => handleSubjectChange(index, 'passMarks', e.target.value)}
-                                                         placeholder="Pass"
-                                                         required
-                                                     />
-                                                 </div>
-                                                 <div className="col-span-1 pb-1">
+                                                <div className="col-span-3 space-y-1">
+                                                    <Label>Pass</Label>
+                                                    <Input
+                                                        type="number"
+                                                        value={sub.passMarks}
+                                                        onChange={(e) => handleSubjectChange(index, 'passMarks', e.target.value)}
+                                                        placeholder="Pass"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="col-span-1 pb-1">
                                                     {subjectsList.length > 1 && (
                                                         <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => handleRemoveSubjectField(index)}>
                                                             <X className="w-4 h-4" />
@@ -848,8 +848,8 @@ const TeacherDashboard = () => {
             <Portal>
                 < AnimatePresence >
                     {showAddStudent && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100]">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md max-h-[85vh] overflow-y-auto relative">
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto relative">
                                 <button onClick={() => setShowAddStudent(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
                                     <X className="w-5 h-5" />
                                 </button>
@@ -884,8 +884,8 @@ const TeacherDashboard = () => {
 
                 <AnimatePresence>
                     {showBulkUpload && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100]">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
                                 <h2 className="text-xl font-bold mb-2">Bulk Upload Students</h2>
                                 <p className="text-sm text-muted-foreground mb-4">Upload an Excel (.xlsx) file with headers: Name, Email, Class, Roll No, Parent Name, Parent Email, Parent Phone.</p>
                                 <form onSubmit={handleBulkUpload} className="space-y-4">
@@ -903,8 +903,8 @@ const TeacherDashboard = () => {
                 {/* Student Details / Edit Modal */}
                 <AnimatePresence>
                     {viewingStudent && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100]">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto relative">
                                 <h2 className="text-xl font-bold mb-4">Student Details</h2>
                                 <div className="space-y-2 text-sm">
                                     <p><span className="font-semibold">Name:</span> {viewingStudent.user?.name}</p>
@@ -973,8 +973,8 @@ const TeacherDashboard = () => {
 
                 <AnimatePresence>
                     {showEditStudent && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md max-h-[85vh] overflow-y-auto relative">
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto relative">
                                 <button onClick={() => setShowEditStudent(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
                                     <X className="w-5 h-5" />
                                 </button>

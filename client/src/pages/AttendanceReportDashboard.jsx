@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    BarChart3, 
-    Calendar, 
-    Download, 
-    FileSpreadsheet, 
-    Filter, 
+import {
+    BarChart3,
+    Calendar,
+    Download,
+    FileSpreadsheet,
+    Filter,
     Search,
     ChevronDown,
     ArrowUpRight,
@@ -15,7 +15,7 @@ import {
     Users,
     CheckCircle2,
     XCircle,
-    Loader2
+    Plus, Search, FileText, Filter, LayoutGrid, List, MoreVertical, X, Calendar, MapPin, Phone, Mail, User, GraduationCap, School, Check, ChevronDown, CheckCircle2, XCircle, BarChart3, Clock, ArrowRight, Download
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../components/UI/Card';
 import { Button } from '../components/UI/Button';
@@ -25,13 +25,14 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '.
 import ClassSelector from '../components/UI/ClassSelector';
 import { cn } from '../lib/utils';
 import * as XLSX from 'xlsx';
-import { 
-    Chart as ChartJS, 
-    CategoryScale, 
-    LinearScale, 
-    BarElement, 
-    Title, 
-    Tooltip, 
+import { downloadFile } from '../lib/downloadHelper';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
     Legend,
     ArcElement,
     PointElement,
@@ -80,7 +81,7 @@ const AttendanceReportDashboard = () => {
                 params: { className, startDate, endDate }
             };
             const { data } = await axios.get('/api/attendance/advanced-report', config);
-            
+
             // Process data for display
             processData(data);
         } catch (error) {
@@ -134,7 +135,7 @@ const AttendanceReportDashboard = () => {
         if (className) fetchReport();
     }, [className]);
 
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
         if (reportData.length === 0) return;
 
         const worksheet = XLSX.utils.json_to_sheet(reportData.map(s => ({
@@ -148,10 +149,11 @@ const AttendanceReportDashboard = () => {
 
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
-        
-        // Generate filename
+
+        // Generate and use universal download
         const filename = `Attendance_Report_${className}_${startDate}_to_${endDate}.xlsx`;
-        XLSX.writeFile(workbook, filename);
+        const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
+        await downloadFile(wbout, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     };
 
     // Chart Data
@@ -194,8 +196,8 @@ const AttendanceReportDashboard = () => {
                 </motion.div>
 
                 <div className="flex items-center gap-3">
-                    <Button 
-                        onClick={exportToExcel} 
+                    <Button
+                        onClick={exportToExcel}
                         disabled={reportData.length === 0}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-6 shadow-lg shadow-indigo-100 transition-all font-bold gap-2"
                     >
@@ -210,32 +212,32 @@ const AttendanceReportDashboard = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                         <div className="space-y-2">
                             <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Class</Label>
-                            <ClassSelector 
-                                value={className} 
+                            <ClassSelector
+                                value={className}
                                 onChange={setClassName}
                                 className="rounded-xl border-slate-200 focus:ring-indigo-500"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Start Date</Label>
-                            <Input 
-                                type="date" 
-                                value={startDate} 
+                            <Input
+                                type="date"
+                                value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
                                 className="rounded-xl border-slate-200 focus:ring-indigo-500"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider">End Date</Label>
-                            <Input 
-                                type="date" 
-                                value={endDate} 
+                            <Input
+                                type="date"
+                                value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                                 className="rounded-xl border-slate-200 focus:ring-indigo-500"
                             />
                         </div>
-                        <Button 
-                            onClick={fetchReport} 
+                        <Button
+                            onClick={fetchReport}
                             disabled={loading || !className}
                             className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-11 font-bold gap-2"
                         >
@@ -248,30 +250,30 @@ const AttendanceReportDashboard = () => {
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard 
-                    title="Total Attendance" 
-                    value={stats.total} 
+                <StatCard
+                    title="Total Attendance"
+                    value={stats.total}
                     icon={<Users className="w-6 h-6" />}
                     color="bg-blue-600"
                     trend={null}
                 />
-                <StatCard 
-                    title="Present Count" 
-                    value={stats.present} 
+                <StatCard
+                    title="Present Count"
+                    value={stats.present}
                     icon={<CheckCircle2 className="w-6 h-6" />}
                     color="bg-emerald-600"
                     trend={<span className="text-emerald-500 flex items-center text-xs font-bold"><ArrowUpRight className="w-3 h-3" /> Average</span>}
                 />
-                <StatCard 
-                    title="Absent Count" 
-                    value={stats.absent} 
+                <StatCard
+                    title="Absent Count"
+                    value={stats.absent}
                     icon={<XCircle className="w-6 h-6" />}
                     color="bg-rose-600"
                     trend={<span className="text-rose-500 flex items-center text-xs font-bold"><ArrowDownRight className="w-3 h-3" /> Warning</span>}
                 />
-                <StatCard 
-                    title="Overall Percentage" 
-                    value={`${stats.percentage}%`} 
+                <StatCard
+                    title="Overall Percentage"
+                    value={`${stats.percentage}%`}
                     icon={<BarChart3 className="w-6 h-6" />}
                     color="bg-indigo-600"
                     trend={null}
@@ -290,14 +292,14 @@ const AttendanceReportDashboard = () => {
                     </CardHeader>
                     <CardContent className="h-[400px]">
                         {reportData.length > 0 ? (
-                            <Bar 
-                                data={barChartData} 
-                                options={{ 
-                                    responsive: true, 
+                            <Bar
+                                data={barChartData}
+                                options={{
+                                    responsive: true,
                                     maintainAspectRatio: false,
                                     plugins: { legend: { position: 'bottom' } },
                                     scales: { y: { beginAtZero: true } }
-                                }} 
+                                }}
                             />
                         ) : (
                             <div className="h-full flex items-center justify-center text-slate-400 italic">No data to display</div>
@@ -313,11 +315,11 @@ const AttendanceReportDashboard = () => {
                         <CardDescription>Present vs Absent ratio.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[300px] flex items-center justify-center">
-                         {reportData.length > 0 ? (
-                             <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
-                         ) : (
-                             <div className="text-slate-400 italic">No data</div>
-                         )}
+                        {reportData.length > 0 ? (
+                            <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
+                        ) : (
+                            <div className="text-slate-400 italic">No data</div>
+                        )}
                     </CardContent>
                     <CardFooter className="flex-col gap-2 pt-0 pb-6 items-start px-6">
                         <div className="flex items-center gap-2 w-full">
@@ -358,7 +360,7 @@ const AttendanceReportDashboard = () => {
                                 <TableBody>
                                     <AnimatePresence>
                                         {reportData.map((row, idx) => (
-                                            <motion.tr 
+                                            <motion.tr
                                                 key={row.studentId}
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
@@ -387,7 +389,7 @@ const AttendanceReportDashboard = () => {
                                                             {row.percentage}%
                                                         </span>
                                                         <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                            <div 
+                                                            <div
                                                                 className={cn(
                                                                     "h-full rounded-full transition-all duration-500",
                                                                     row.percentage >= 75 ? "bg-emerald-500" : row.percentage >= 50 ? "bg-amber-400" : "bg-rose-400"

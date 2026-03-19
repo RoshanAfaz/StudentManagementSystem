@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, User, Lock, Menu } from 'lucide-react';
+import { Bell, User, Lock, Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '../UI/Button';
 import ChangePasswordModal from '../UI/ChangePasswordModal';
 import ProfileModal from '../UI/ProfileModal';
@@ -13,6 +13,17 @@ const Navbar = ({ onToggleSidebar }) => {
     const { hasUnread } = useEventBadge();
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    // Initial check for dark mode
+    useEffect(() => {
+        setIsDarkMode(document.documentElement.classList.contains('dark'));
+    }, []);
+
+    const toggleDarkMode = () => {
+        document.documentElement.classList.toggle('dark');
+        setIsDarkMode(!isDarkMode);
+    };
 
     const handleNotificationClick = () => {
         if (user?.role) {
@@ -22,7 +33,7 @@ const Navbar = ({ onToggleSidebar }) => {
 
     return (
         <>
-            <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50 px-6 h-16 flex items-center justify-between transition-colors duration-500">
+            <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50 px-4 md:px-6 pt-[var(--sat,0px)] lg:pt-0 min-h-16 flex items-center justify-between transition-colors duration-500" style={{ '--sat': 'env(safe-area-inset-top, 24px)', paddingBottom: '0.5rem' }}>
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" className="md:hidden" onClick={onToggleSidebar}>
                         <Menu className="w-6 h-6" />
@@ -31,10 +42,12 @@ const Navbar = ({ onToggleSidebar }) => {
                         className="cursor-pointer group"
                         onClick={() => setIsProfileModalOpen(true)}
                     >
-                        <h2 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors">
-                            Welcome back, <span className="text-primary">{user?.name}</span>
+                        <h2 className="text-sm md:text-lg font-semibold text-gray-800 group-hover:text-primary transition-colors leading-tight line-clamp-1 max-w-[150px] md:max-w-none">
+                            <span className="hidden sm:inline">Welcome back, </span>
+                            <span className="sm:hidden">Hi, </span>
+                            <span className="text-primary">{user?.name}</span>
                         </h2>
-                        <p className="text-xs text-muted-foreground capitalize">{user?.role} Dashboard</p>
+                        <p className="text-[10px] md:text-xs text-muted-foreground capitalize">{user?.role} Dashboard</p>
                     </div>
                 </div>
 
@@ -47,6 +60,15 @@ const Navbar = ({ onToggleSidebar }) => {
                     >
                         <Lock className="w-4 h-4" />
                         <span className="hidden sm:inline">Change Password</span>
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-gray-500 hover:text-primary"
+                        onClick={toggleDarkMode}
+                    >
+                        {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                     </Button>
 
                     <Button

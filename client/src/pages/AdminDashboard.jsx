@@ -109,29 +109,30 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="space-y-8"
             >
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm">Master Control</h1>
-                        <p className="text-muted-foreground text-lg mt-1">System-wide overview & administration</p>
+                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm">Master Control</h1>
+                        <p className="text-muted-foreground text-sm md:text-lg mt-1">System-wide overview & administration</p>
                     </div>
-                    <div className="flex gap-3">
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button onClick={() => setShowResetModal(true)} variant="destructive" className="shadow-lg mr-2">
-                                <AlertTriangle className="w-4 h-4 mr-2" /> Reset System
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 md:flex-none">
+                            <Button onClick={() => setShowResetModal(true)} variant="destructive" className="shadow-lg w-full">
+                                <AlertTriangle className="w-4 h-4 mr-1 md:mr-2" /> <span className="text-xs md:text-sm">Reset System</span>
                             </Button>
                         </motion.div>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button onClick={() => { setUserRole('Principal'); setShowAddUser(true); }} variant="premium" className="shadow-md">
-                                <Plus className="w-4 h-4 mr-2" /> Add Principal
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 md:flex-none">
+                            <Button onClick={() => { setUserRole('Principal'); setShowAddUser(true); }} variant="premium" className="shadow-md w-full">
+                                <Plus className="w-4 h-4 mr-1 md:mr-2" /> <span className="text-xs md:text-sm">Add Principal</span>
                             </Button>
                         </motion.div>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button onClick={() => { setUserRole('Admin'); setShowAddUser(true); }} variant="premium" className="shadow-md !from-slate-700 !to-slate-900">
-                                <Plus className="w-4 h-4 mr-2" /> Add Admin
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 md:flex-none">
+                            <Button onClick={() => { setUserRole('Admin'); setShowAddUser(true); }} variant="premium" className="shadow-md !from-slate-700 !to-slate-900 w-full">
+                                <Plus className="w-4 h-4 mr-1 md:mr-2" /> <span className="text-xs md:text-sm">Add Admin</span>
                             </Button>
                         </motion.div>
                     </div>
                 </div>
+
 
                 {msg && (
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`p-4 rounded-lg shadow-sm font-medium ${msg.includes('Error') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>

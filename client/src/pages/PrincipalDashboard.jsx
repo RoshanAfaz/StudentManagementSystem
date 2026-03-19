@@ -290,8 +290,8 @@ const PrincipalDashboard = () => {
             <Portal>
                 <AnimatePresence>
                     {showAddTeacher && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100]">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md relative">
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
                                 <button type="button" onClick={() => setShowAddTeacher(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
                                 <h2 className="text-xl font-bold mb-4">Add Teacher</h2>
                                 <form onSubmit={handleAddTeacher} className="space-y-3">
@@ -363,8 +363,8 @@ const PrincipalDashboard = () => {
 
                 <AnimatePresence>
                     {selectedUser && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100]">
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md relative">
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto relative">
                                 <button type="button" onClick={() => setSelectedUser(null)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
                                 <h2 className="text-xl font-bold mb-4">Details</h2>
                                 <div className="space-y-2 text-sm">

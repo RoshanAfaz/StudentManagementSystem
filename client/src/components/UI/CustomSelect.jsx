@@ -4,11 +4,11 @@ import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import Portal from './Portal';
 
-const CustomSelect = ({ 
-    options = [], 
-    value, 
-    onChange, 
-    placeholder = "Select option", 
+const CustomSelect = ({
+    options = [],
+    value,
+    onChange,
+    placeholder = "Select option",
     className,
     label,
     required = false
@@ -16,7 +16,7 @@ const CustomSelect = ({
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
     const menuRef = useRef(null);
-    const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+    const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, direction: 'down' });
 
     const selectedOption = options.find(opt => opt.value === value) || options.find(opt => opt === value);
     const displayLabel = typeof selectedOption === 'object' ? selectedOption.label : selectedOption;
@@ -24,10 +24,23 @@ const CustomSelect = ({
     const updateCoords = () => {
         if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const menuHeight = 260; // Approximate max-height
+
+            let direction = 'down';
+            let top = rect.bottom + window.scrollY;
+
+            if (spaceBelow < menuHeight && spaceAbove > spaceBelow) {
+                direction = 'up';
+                top = rect.top + window.scrollY - menuHeight - 8;
+            }
+
             setCoords({
-                top: rect.bottom + window.scrollY,
+                top,
                 left: rect.left + window.scrollX,
-                width: rect.width
+                width: rect.width,
+                direction
             });
         }
     };
@@ -48,7 +61,7 @@ const CustomSelect = ({
         const handleClickOutside = (event) => {
             const isOutsideContainer = containerRef.current && !containerRef.current.contains(event.target);
             const isOutsideMenu = menuRef.current && !menuRef.current.contains(event.target);
-            
+
             if (isOutsideContainer && isOutsideMenu) {
                 setIsOpen(false);
             }
@@ -93,13 +106,13 @@ const CustomSelect = ({
                         <Portal>
                             <motion.div
                                 ref={menuRef}
-                                initial={{ opacity: 0, y: 5, scale: 0.95 }}
+                                initial={{ opacity: 0, y: coords.direction === 'down' ? 5 : -5, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                                exit={{ opacity: 0, y: coords.direction === 'down' ? 5 : -5, scale: 0.95 }}
                                 transition={{ duration: 0.1, ease: "easeOut" }}
                                 style={{
                                     position: 'absolute',
-                                    top: coords.top + 8,
+                                    top: coords.direction === 'down' ? coords.top + 8 : coords.top + 8, // Adjust for the 8px offset
                                     left: coords.left,
                                     width: coords.width,
                                     zIndex: 9999
@@ -117,14 +130,14 @@ const CustomSelect = ({
                                             type="button"
                                             onClick={() => handleSelect(option)}
                                             className={cn(
-                                                "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors text-left",
-                                                isSelected 
-                                                    ? "bg-indigo-50 text-indigo-700 font-bold" 
+                                                "w-full flex items-center justify-between px-5 py-3 text-sm transition-colors text-left border-b border-gray-50 last:border-0",
+                                                isSelected
+                                                    ? "bg-indigo-50 text-indigo-700 font-bold"
                                                     : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
                                             )}
                                         >
                                             <span>{label}</span>
-                                            {isSelected && <Check className="w-4 h-4" />}
+                                            {isSelected && <Check className="w-5 h-5 text-indigo-600" />}
                                         </button>
                                     );
                                 })}

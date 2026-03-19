@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,8 +20,18 @@ const Login = () => {
     // const [msg, setMsg] = useState(''); // Removed
     const [loading, setLoading] = useState(false);
 
-    const { login } = useAuth();
+    const { login, user, loading: authLoading } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user && !authLoading) {
+            if (user.role === 'Admin') navigate('/admin/dashboard', { replace: true });
+            else if (user.role === 'Principal') navigate('/principal/dashboard', { replace: true });
+            else if (user.role === 'Teacher') navigate('/teacher/dashboard', { replace: true });
+            else if (user.role === 'Student') navigate('/student/dashboard', { replace: true });
+            else if (user.role === 'Parent') navigate('/parent/dashboard', { replace: true });
+        }
+    }, [user, authLoading, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
